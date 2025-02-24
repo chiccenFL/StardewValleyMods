@@ -283,6 +283,19 @@ namespace FruitTreeTweaks
                 return;
             }
         }
+
+        [HarmonyPatch(typeof(FruitTree), nameof(FruitTree.seasonUpdate))]
+        public class FruitTree_SeasonUpdate_Patch
+        {
+            public static bool Prefix(ref bool __result, bool onLoad)
+            {
+                if (Config.EnableMod && Config.FruitStayThroughSeasons) {
+                    __result = false; // This is the original return value
+                    return false; // Do not run original code
+                }
+                return true;
+            }
+        }
         #endregion
 
         #region Placement Logic

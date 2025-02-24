@@ -88,7 +88,7 @@ namespace FruitTreeTweaks
             configMenu.Register(
                 mod: ModManifest,
                 reset: () => Config = new ModConfig(),
-                save: () => Helper.WriteConfig(Config)
+                save: () => onSave()
             );
 
             configMenu.AddSectionTitle( // Generic Options
@@ -193,6 +193,15 @@ namespace FruitTreeTweaks
             );
             Log($"Fruit In Winter: {Config.FruitInWinter}", debugOnly: true);
 
+            configMenu.AddBoolOption(
+                mod: ModManifest,
+                name: () => I18n.FruitStayThroughSeasons(),
+                tooltip: () => I18n.FruitStayThroughSeasons_1(),
+                getValue: () => Config.FruitStayThroughSeasons,
+                setValue: value => Config.FruitStayThroughSeasons = value
+            );
+            Log($"Fruit Stay Through Seasons: {Config.FruitStayThroughSeasons}", debugOnly: true);
+
             configMenu.AddNumberOption(
                 mod: ModManifest,
                 name: () => I18n.MinFruitDay(),
@@ -291,6 +300,13 @@ namespace FruitTreeTweaks
         private void GameLoop_SaveLoaded(object sender, SaveLoadedEventArgs e)
         {
             fruitToday = GetFruitPerDay(); // this breaks if it is anywhere else so dont move it
+            HandleFruitStayThroughSeasonsChange();
+        }
+
+        private void onSave()
+        {
+            Helper.WriteConfig(Config);
+            HandleFruitStayThroughSeasonsChange();
         }
     }
 }

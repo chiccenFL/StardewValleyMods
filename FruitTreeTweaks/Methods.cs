@@ -92,6 +92,31 @@ namespace FruitTreeTweaks
             return (!string.IsNullOrEmpty(deniedMessage) ? false : true);
         }
 
+        private static void HandleFruitStayThroughSeasonsChange()
+        {
+            // For each tree, do a season update to remove out of season fruit
+            // for the FruitStayThroughSeasons option. This should be called
+            // when the option is changed. This should be safe to call
+            // regardless of whether the option is off or on since the prefix
+            // will check
+            Utility.ForEachLocation(
+                delegate(GameLocation location)
+                {
+                    location.terrainFeatures.RemoveWhere(
+                        (KeyValuePair<Vector2, TerrainFeature> pair) =>
+                        {
+                            if (pair.Value is FruitTree fruitTree)
+                            {
+                                return fruitTree.seasonUpdate(false);
+                            }
+                            return false;
+                        }
+                    );
+                    return true;
+                }
+            );
+        }
+
         #region Draw Methods
         private static Texture2D GetTexture(FruitTree tree, out Rectangle sourceRect)
         {
